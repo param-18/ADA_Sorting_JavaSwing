@@ -1,25 +1,27 @@
 package pr;
 
-import java.awt.Color;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 
 
 public class Ins extends JFrame implements ActionListener{
 
 	private JTextField  tfNumbers , tfRange;
-	
 	private JCheckBox cbInsertion , cbQuick , cbMerge , cbCounting;
 	private List<InputArray> inputArrays;
 	private List<OutputItem> outputItems;
@@ -186,7 +188,7 @@ public class Ins extends JFrame implements ActionListener{
 				OutputItem item = new OutputItem(inputArrays.get(inputArrays.size()-1),cbInsertion.getText().toString(), finalT-initT , temp);
 				outputItems.add(item);
 				visibleMainOption();
-				printList();
+				//printList();
 			}
 			if(cbQuick.isSelected())
 			{
@@ -207,7 +209,7 @@ public class Ins extends JFrame implements ActionListener{
 				OutputItem item = new OutputItem(inputArrays.get(inputArrays.size()-1),cbQuick.getText().toString(), finalT-initT , temp);
 				outputItems.add(item);
 				visibleMainOption();
-				printList();
+				//printList();
 			}
 			if(cbMerge.isSelected())
 			{
@@ -228,7 +230,7 @@ public class Ins extends JFrame implements ActionListener{
 				OutputItem item = new OutputItem(inputArrays.get(inputArrays.size()-1),cbMerge.getText().toString(), finalT-initT , temp);
 				outputItems.add(item);
 				visibleMainOption();
-				printList();
+				//printList();
 			}
 			if(cbCounting.isSelected())
 			{
@@ -251,7 +253,7 @@ public class Ins extends JFrame implements ActionListener{
 				OutputItem item = new OutputItem(inputArrays.get(inputArrays.size()-1),cbCounting.getText().toString(), finalT-initT , oA);
 				outputItems.add(item);
 				visibleMainOption();
-				printList();
+				//printList();
 			}
 			if(!(cbInsertion.isSelected() || cbQuick.isSelected() || cbMerge.isSelected() || cbCounting.isSelected()))
 			JOptionPane.showMessageDialog(null, "Please Select Any Sorting Algo First!","!!!Select!!!",JOptionPane.INFORMATION_MESSAGE);
@@ -260,37 +262,79 @@ public class Ins extends JFrame implements ActionListener{
 		}
 		else if(e.getSource() == btShowGraph)
 		{
-
-			if(outputItems.size() > 2)
+			if(outputItems.size() > 1)
 			{
 				List<Integer> result = checkForEveryAlgo();
 				if(result !=  null)
 				{
+					XYSeriesCollection dataset = new XYSeriesCollection();
 					for(int i :  result)
 					{
 						switch (i)
 						{
 							case 0 :
-
+								XYSeries seriesIns = new XYSeries("Insertion Sort");
+                                 for(OutputItem item : outputItems)
+								 {
+									 if(item.getSortType().equals(cbInsertion.getText().toString()))
+									 {
+										 seriesIns.add(item.getInputArray().getArr().length,item.getTime());
+									 }
+								 }
+								 seriesIns.setDescription("Insertion Sort");
+                                 dataset.addSeries(seriesIns);
 								//insertion sort graph
 								break;
 							case 1 :
 								//Quick sort graph
+								XYSeries seriesQuick = new XYSeries("Quick Sort");
+								for(OutputItem item : outputItems)
+								{
+									if(item.getSortType().equals(cbQuick.getText().toString()))
+									{
+										seriesQuick.add(item.getInputArray().getArr().length,item.getTime());
+									}
+								}
+								seriesQuick.setDescription("Quick Sort");
+								dataset.addSeries(seriesQuick);
 								break;
 							case 2 :
 								//Merge Sort graph
+								XYSeries seriesMerge = new XYSeries("Merge Sort");
+								for(OutputItem item : outputItems)
+								{
+									if(item.getSortType().equals(cbMerge.getText().toString()))
+									{
+										seriesMerge.add(item.getInputArray().getArr().length,item.getTime());
+									}
+								}
+								seriesMerge.setDescription("Merge Sort");
+								dataset.addSeries(seriesMerge);
 								break;
 							case 3 :
 								//Counting Sort graph
+								XYSeries seriesCounting = new XYSeries("Counting Sort");
+								for(OutputItem item : outputItems)
+								{
+									if(item.getSortType().equals(cbCounting.getText().toString()))
+									{
+										seriesCounting.add(item.getInputArray().getArr().length,item.getTime());
+									}
+								}
+								seriesCounting.setDescription("Counting Sort");
+								dataset.addSeries(seriesCounting);
 								break;
 						}
 					}
-					btShowGraph.setEnabled(true);
+					JPanel panel = createChartPanel(dataset,"Time Complexity of Alogs","No. of Inputs","Time Taken (in Milis)");
+					this.add(panel);
+					panel.setBounds(250,300,400,250);
+
 				}
 				else {
 					JOptionPane.showMessageDialog(null, "Please Take Minimum 2 Input For Same Algorithm", "!!!Attention!!!", JOptionPane.ERROR_MESSAGE);
-					btShowGraph.setEnabled(true);
 				}
+				btShowGraph.setEnabled(true);
 			}
 			else
 				JOptionPane.showMessageDialog(null, "Please Take Minimum 2 Input For Any Same Algorithm", "!!!Attention!!!", JOptionPane.ERROR_MESSAGE);
@@ -332,19 +376,19 @@ public class Ins extends JFrame implements ActionListener{
 		return null;
 	}
 
-	private void printList() {
-		// TODO Auto-generated method stub
-		    for(OutputItem item : outputItems) {
-					System.out.println(item.getSortType() + " " + item.getTime() + " at " + item.getInputArray().getArr().length + " inputs");
-					System.out.print("Input Array: ");
-					for (int i : item.getInputArray().getArr())
-						System.out.print(i + " ");
-					System.out.print("\nSorted Array: ");
-					for (int i : item.getSortedArray())
-						System.out.print(i + " ");
-					System.out.println();
-		    }
-	}
+//	private void printList() {
+//		// TODO Auto-generated method stub
+//		    for(OutputItem item : outputItems) {
+//					System.out.println(item.getSortType() + " " + item.getTime() + " at " + item.getInputArray().getArr().length + " inputs");
+//					System.out.print("Input Array: ");
+//					for (int i : item.getInputArray().getArr())
+//						System.out.print(i + " ");
+//					System.out.print("\nSorted Array: ");
+//					for (int i : item.getSortedArray())
+//						System.out.print(i + " ");
+//					System.out.println();
+//		    }
+//	}
 
 	private void visibleChoosenOption() {
 		// TODO Auto-generated method stub
@@ -377,5 +421,9 @@ public class Ins extends JFrame implements ActionListener{
 		btSelectSort.setVisible(false);
 	}
 
-	
+	//creating JPanel
+	private JPanel createChartPanel(XYDataset dataset , String chartTitle , String xAxisLabel , String yAxisLabel ) {
+		JFreeChart chart = ChartFactory.createXYLineChart(chartTitle,xAxisLabel,yAxisLabel,dataset, PlotOrientation.VERTICAL,true,true,false);
+		return new ChartPanel(chart);
+	}
 }
