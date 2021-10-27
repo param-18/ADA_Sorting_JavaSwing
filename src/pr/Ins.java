@@ -4,6 +4,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -69,17 +70,26 @@ public class Ins extends JFrame implements ActionListener{
 		add(btShowGraph);
 
 		//set Coordinates and Size
-		jScrollPane.setBounds(20,10,180,60);
-		btTakeArr1.setBounds(220,20,100,40);
-		tfNumbers.setBounds(340,10,80,60);
-		tfRange.setBounds(440,10,80,60);
-		btGenerateRand.setBounds(540,20,100,40);
-		cbInsertion.setBounds(20,80,120,15);
-		cbQuick.setBounds(20,105,120,15);
-		cbMerge.setBounds(20,130,120,15);
-		cbCounting.setBounds(20,155,120,15);
-		btSelectSort.setBounds(170, 180, 100, 40);
-		btShowGraph.setBounds(200,230,100,40);
+		JLabel enterArrayLabel = new JLabel("Please Enter Array Here");
+		add(enterArrayLabel);
+		enterArrayLabel.setBounds(20,10,180,60);
+		jScrollPane.setBounds(220,10,180,60);
+		btTakeArr1.setBounds(420,20,100,40);
+		JLabel enterInputsLabel = new JLabel("How many Numbers You Want Generate");
+		add(enterInputsLabel);
+		enterInputsLabel.setBounds(20,80,250,60);
+		tfNumbers.setBounds(290,80,80,60);
+		JLabel enterRangeLabel = new JLabel("Range of Numbers You Want Generate");
+		add(enterRangeLabel);
+		enterRangeLabel.setBounds(390,80,250,60);
+		tfRange.setBounds(660,80,80,60);
+		btGenerateRand.setBounds(760,80,100,40);
+		cbInsertion.setBounds(20,150,120,15);
+		cbQuick.setBounds(20,175,120,15);
+		cbMerge.setBounds(20,200,120,15);
+		cbCounting.setBounds(20,225,120,15);
+		btSelectSort.setBounds(170, 250, 100, 40);
+		btShowGraph.setBounds(200,300,100,40);
 
 		//Set Description
 		tfTitle.setToolTipText("Enter the Array here.") ;
@@ -149,6 +159,7 @@ public class Ins extends JFrame implements ActionListener{
 		else if(e.getSource() == btGenerateRand)
 		{
 			tfTitle.setText("");
+
 			Runnable ru = new Runnable()
 			{
 					@Override
@@ -165,6 +176,7 @@ public class Ins extends JFrame implements ActionListener{
 				
 					};
 			Thread t = new Thread(ru);
+			t.setPriority(Thread.MAX_PRIORITY);
 			t.start();
 		}
 		else if(e.getSource() == btSelectSort)
@@ -328,7 +340,7 @@ public class Ins extends JFrame implements ActionListener{
 					}
 					JPanel panel = createChartPanel(dataset,"Time Complexity of Alogs","No. of Inputs","Time Taken (in Milis)");
 					this.add(panel);
-					panel.setBounds(250,300,400,250);
+					panel.setBounds(150,350,600,250);
 
 				}
 				else {
